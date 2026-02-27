@@ -1,16 +1,8 @@
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
-import {
-  getFirestore,
-  doc,
-  getDoc,
-} from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
-
-import { firebaseConfig } from "./firebase-config.js";
-
 const DEMO = {
   name: "Ваше Имя",
   title: "Должность • Город • Формат работы",
   updatedAt: null,
+  photoUrl: null,
   resumeMarkdown: `# Ваше Имя
 
 **Коротко:** 2–4 предложения о себе, опыте и сильных сторонах.
@@ -59,11 +51,25 @@ function formatDate(value) {
   }
 }
 
+function setAvatarPhoto(url) {
+  const img = document.getElementById("avatarImg");
+  if (!img) return;
+  const u = typeof url === "string" ? url.trim() : "";
+  if (!u) {
+    img.removeAttribute("src");
+    img.style.display = "none";
+    return;
+  }
+  img.src = u;
+  img.style.display = "block";
+}
+
 function renderResume(data, sourceLabel) {
   setText("candidateName", data?.name || DEMO.name);
   setText("candidateTitle", data?.title || DEMO.title);
   setText("dataSource", sourceLabel);
   setText("updatedAt", formatDate(data?.updatedAt || null));
+  setAvatarPhoto(data?.photoUrl || null);
 
   const content = document.getElementById("resumeContent");
   const md = data?.resumeMarkdown || DEMO.resumeMarkdown;
@@ -71,24 +77,34 @@ function renderResume(data, sourceLabel) {
   content.innerHTML = window.marked.parse(md);
 }
 
-async function tryLoadFromFirestore() {
-  if (!firebaseConfig || firebaseConfig.apiKey === "REPLACE_ME") return null;
-  const app = initializeApp(firebaseConfig);
-  const db = getFirestore(app);
+async function fetchJson(path) {
+  const res = await fetch(path, { cache: "no-store" });
+  if (!res.ok) throw new Error(`Failed to fetch ${path}: ${res.status}`);
+  return await res.json();
+}
 
-  const ref = doc(db, "public", "resume");
-  const snap = await getDoc(ref);
-  if (!snap.exists()) return null;
-  return snap.data();
+async function fetchText(path) {
+  const res = await fetch(path, { cache: "no-store" });
+  if (!res.ok) throw new Error(`Failed to fetch ${path}: ${res.status}`);
+  return await res.text();
 }
 
 async function initResume() {
   try {
-    const data = await tryLoadFromFirestore();
-    if (!data) return renderResume(DEMO, "demo");
-    return renderResume(data, "firestore");
+    const profile = await fetchJson("./profile.json");
+    const md = await fetchText("./resume.md");
+    return renderResume(
+      {
+        name: profile?.name,
+        title: profile?.title,
+        photoUrl: profile?.photoUrl,
+        updatedAt: profile?.updatedAt || null,
+        resumeMarkdown: md,
+      },
+      "static"
+    );
   } catch (e) {
-    console.warn("Failed to load resume from Firestore:", e);
+    console.warn("Failed to load resume from static files:", e);
     renderResume(DEMO, "demo");
   }
 }
@@ -105,19 +121,6 @@ function initCopyLink() {
       window.prompt("Скопируйте ссылку вручную:", url);
     }
   });
-}
-
-function initLoginVisibility() {
-  const link = document.getElementById("loginLink");
-  if (!link) return;
-
-  const url = new URL(window.location.href);
-  const show =
-    url.searchParams.get("admin") === "1" ||
-    url.searchParams.get("login") === "1" ||
-    window.location.hash === "#admin";
-
-  link.style.display = show ? "inline-flex" : "none";
 }
 
 function badgeByPercent(pct) {
@@ -196,7 +199,6 @@ async function initAiMatch() {
 
 setText("buildInfo", "resume-v1");
 initCopyLink();
-initLoginVisibility();
 initResume();
 initAiMatch();
 

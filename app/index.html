@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Вход • CV AI</title>
+    <link rel="stylesheet" href="../resume/styles.css" />
+  </head>
+  <body>
+    <div class="container">
+      <div class="topbar">
+        <div class="brand">
+          <div class="avatar" aria-hidden="true"></div>
+          <div class="brandText">
+            <div class="title">CV AI</div>
+            <div class="subtitle">Вход по email (magic link)</div>
+          </div>
+        </div>
+        <div class="topActions">
+          <a class="btn btnSmall" href="../resume/">Моё резюме</a>
+        </div>
+      </div>
+
+      <div class="grid" style="grid-template-columns: 1fr;">
+        <section class="card">
+          <div class="cardHeader">
+            <div class="cardTitle">Войти</div>
+            <div class="cardSub">
+              Мы отправим ссылку для входа на email. Пароли не нужны.
+            </div>
+          </div>
+          <div class="cardBody">
+            <label class="fieldLabel" for="email">Email</label>
+            <input id="email" type="email" placeholder="you@example.com" />
+
+            <div style="margin-top: 12px; display:flex; gap:10px; flex-wrap:wrap;">
+              <button class="btn btnPrimary" id="sendBtn" type="button">Получить ссылку</button>
+            </div>
+
+            <div class="status" id="status"></div>
+            <div class="hint">
+              После входа попадёшь в кабинет и сможешь опубликовать ссылку для рекрутера.
+            </div>
+          </div>
+        </section>
+      </div>
+    </div>
+
+    <script src="./supabase-config.js"></script>
+    <script type="module" src="./login.js"></script>
+  </body>
+</html>
+

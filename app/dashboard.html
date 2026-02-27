@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Кабинет • CV AI</title>
+    <link rel="stylesheet" href="../resume/styles.css" />
+  </head>
+  <body>
+    <div class="container">
+      <div class="topbar">
+        <div class="brand">
+          <div class="avatar">
+            <img id="avatarImg" alt="" style="display:none;" />
+          </div>
+          <div class="brandText">
+            <div class="title">Кабинет</div>
+            <div class="subtitle" id="userLine">—</div>
+          </div>
+        </div>
+        <div class="topActions">
+          <a class="btn btnSmall" href="../resume/">Моё резюме</a>
+          <button class="btn btnSmall" id="logoutBtn" type="button">Выйти</button>
+        </div>
+      </div>
+
+      <div class="grid">
+        <section class="card">
+          <div class="cardHeader">
+            <div class="cardTitle">Профиль</div>
+            <div class="cardSub">Эти данные видны рекрутеру на публичной странице.</div>
+          </div>
+          <div class="cardBody">
+            <label class="fieldLabel" for="displayName">Имя</label>
+            <input id="displayName" type="text" placeholder="Ваше Имя" />
+
+            <label class="fieldLabel" for="title">Заголовок</label>
+            <input id="title" type="text" placeholder="Должность • Город • Формат" />
+
+            <label class="fieldLabel" for="photoUrl">Фото (URL)</label>
+            <input id="photoUrl" type="url" placeholder="https://..." />
+
+            <div style="margin-top: 12px; display:flex; gap:10px; flex-wrap:wrap;">
+              <button class="btn btnPrimary" id="saveBtn" type="button">Сохранить</button>
+            </div>
+
+            <div class="status" id="profileStatus"></div>
+          </div>
+        </section>
+
+        <section class="card">
+          <div class="cardHeader">
+            <div class="cardTitle">Публикация</div>
+            <div class="cardSub">По умолчанию резюме приватное. Нажмите Publish, чтобы получить ссылку.</div>
+          </div>
+          <div class="cardBody">
+            <div class="hint">Статус: <span class="mono" id="pubStatus">—</span></div>
+            <div class="hint">Ссылка: <span class="mono" id="pubLink">—</span></div>
+
+            <div style="margin-top: 12px; display:flex; gap:10px; flex-wrap:wrap;">
+              <button class="btn btnPrimary" id="publishBtn" type="button">Publish</button>
+              <button class="btn" id="unpublishBtn" type="button">Unpublish</button>
+              <button class="btn" id="copyBtn" type="button">Скопировать ссылку</button>
+            </div>
+            <div class="status" id="pubStatusLine"></div>
+          </div>
+        </section>
+      </div>
+
+      <div class="grid" style="grid-template-columns: 1fr;">
+        <section class="card">
+          <div class="cardHeader">
+            <div class="cardTitle">Резюме (Markdown)</div>
+            <div class="cardSub">Редактируйте текст. AI будет сравнивать его с вакансией.</div>
+          </div>
+          <div class="cardBody">
+            <textarea id="markdown" placeholder="# Ваше Имя&#10;&#10;..." style="min-height: 360px;"></textarea>
+            <div style="margin-top: 12px; display:flex; gap:10px; flex-wrap:wrap;">
+              <button class="btn btnPrimary" id="saveMarkdownBtn" type="button">Сохранить текст</button>
+            </div>
+            <div class="status" id="mdStatus"></div>
+          </div>
+        </section>
+      </div>
+    </div>
+
+    <script src="./supabase-config.js"></script>
+    <script type="module" src="./dashboard.js"></script>
+  </body>
+</html>
+

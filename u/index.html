@@ -3,16 +3,15 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <meta name="theme-color" content="#0b1020" />
     <title>Резюме</title>
-    <link rel="stylesheet" href="./styles.css" />
+    <link rel="stylesheet" href="../resume/styles.css" />
   </head>
   <body>
     <div class="container">
       <div class="topbar">
         <div class="brand">
           <div class="avatar">
-            <img id="avatarImg" alt="" />
+            <img id="avatarImg" alt="" style="display:none;" />
           </div>
           <div class="brandText">
             <div class="title" id="candidateName">Кандидат</div>
@@ -20,6 +19,7 @@
           </div>
         </div>
         <div class="topActions">
+          <a class="btn btnSmall" href="/app/">Создать своё</a>
           <button class="btn btnPrimary btnSmall" id="copyLinkBtn" type="button">Скопировать ссылку</button>
         </div>
       </div>
@@ -28,11 +28,8 @@
         <section class="card" aria-label="Резюме">
           <div class="cardHeader">
             <div class="cardTitle">Резюме</div>
-            <div class="cardSub">
-              Контент берётся из файлов репозитория. Редактировать может только владелец репозитория.
-            </div>
+            <div class="cardSub" id="subline">—</div>
             <div class="resumeMeta">
-              <div>Источник: <span class="mono" id="dataSource">static</span></div>
               <div>Обновлено: <span class="mono" id="updatedAt">—</span></div>
             </div>
           </div>
@@ -45,22 +42,18 @@
           <div class="cardHeader">
             <div class="cardTitle">Спроси у AI</div>
             <div class="cardSub">
-              Рекрутер вставляет ссылку на вакансию (или текст), AI сравнивает с резюме и возвращает краткий вывод и процент матча.
+              Вставьте ссылку на вакансию (или текст). AI сравнит с резюме и вернёт вывод и процент матча.
             </div>
           </div>
           <div class="cardBody">
             <label class="fieldLabel" for="vacancyUrl">Ссылка на вакансию</label>
             <input id="vacancyUrl" type="url" placeholder="https://..." autocomplete="off" />
 
-            <label class="fieldLabel" for="vacancyText">…или вставьте описание (если ссылка не открывается)</label>
+            <label class="fieldLabel" for="vacancyText">…или вставьте описание</label>
             <textarea id="vacancyText" placeholder="Требования, стек, задачи, условия…"></textarea>
 
             <div style="margin-top: 12px; display:flex; gap:10px; flex-wrap:wrap;">
               <button class="btn btnPrimary" id="matchBtn" type="button">Оценить матч</button>
-            </div>
-
-            <div class="hint">
-              На Vercel работает автоматически через <span class="mono">/api/match</span>. На GitHub Pages нужен внешний API (можно указать <span class="mono">aiApiBaseUrl</span> в <span class="mono">resume/config.js</span>).
             </div>
 
             <div class="status" id="matchStatus"></div>
@@ -76,18 +69,14 @@
       </div>
 
       <div class="footer">
-        <div>
-          <span class="mono" id="buildInfo">v0</span>
-        </div>
-        <div>
-          <span class="hint">Редактирование — через GitHub</span>
-        </div>
+        <div><span class="mono">u</span></div>
+        <div><a class="btn btnSmall" href="/app/">Войти</a></div>
       </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-    <script src="./config.js"></script>
-    <script type="module" src="./app.js"></script>
+    <script src="/app/supabase-config.js"></script>
+    <script type="module" src="./u.js"></script>
   </body>
 </html>
 

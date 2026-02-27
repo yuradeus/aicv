@@ -1,57 +1,43 @@
-# Resume site + admin + AI matching
+# CV AI: резюме + AI‑матчинг + платформа
 
-Это отдельный репозиторий для сайта‑визитки (резюме), админки для редактирования и AI‑функции “насколько кандидат подходит под вакансию”.
+Это репозиторий для:
+- личного сайта‑резюме (статические файлы)
+- AI‑фичи “насколько кандидат подходит под вакансию”
+- (опционально) платформы, где пользователи создают/публикуют своё резюме через Supabase
 
 ## Структура
 
-- `resume/` — публичная страница резюме + виджет AI‑матчинга + админка
-- `worker/` — Cloudflare Worker (API), чтобы не светить AI‑ключ в браузере
+- `resume/` — личная публичная страница резюме (статическая) + AI‑виджет
+- `api/` — Vercel serverless function `/api/match` (ключи OpenRouter остаются на сервере)
+- `app/` — вход по email + кабинет (Supabase)
+- `u/` — публичная страница резюме по ссылке `/u/<slug>` (Supabase)
+- `supabase/schema.sql` — SQL для таблицы и RLS
 
 ## Быстрый старт (локально)
 
-- Откройте `resume/index.html` в браузере — пока будет показан демо‑контент.
-- Для админки откройте `resume/admin.html` (после настройки Firebase).
+- Откройте `resume/index.html` в браузере — будет показан контент из `resume/profile.json` и `resume/resume.md`.
 
 ## Деплой бесплатно
 
-- **Фронтенд**: GitHub Pages (папка репозитория)
-- **Админка/данные**: Firebase (Auth + Firestore, бесплатный Spark)
-- **AI API**: Cloudflare Worker (бесплатный tier) + любой AI‑провайдер по API‑ключу
+- **Сайт + API**: Vercel (рекомендуется, потому что нужен `/api/match` для AI)
+- **Платформа резюме пользователей**: Supabase (Auth + Postgres + RLS)
 
-## Настройка Firebase (Auth + Firestore)
+## Редактирование резюме (только владелец)
 
-1) Создайте проект в Firebase Console.
+Резюме хранится прямо в репозитории:
 
-2) Создайте Web App и скопируйте конфиг в `resume/firebase-config.js`.
+- `resume/profile.json` — имя/заголовок/ссылка на фото
+- `resume/resume.md` — текст резюме в Markdown
 
-3) Включите Authentication:
-- Sign-in method → **Email/Password** → Enable
-- Создайте пользователя (ваш email + пароль) в Authentication → Users
+Чтобы обновить резюме:
+- отредактируйте эти файлы на GitHub (кнопка ✏️ Edit) или локально
+- сделайте commit → Vercel/GitHub Pages автоматически обновят сайт
 
-4) Создайте Firestore Database (режим Production).
+Фото можно положить в репозиторий как `resume/avatar.jpg` и указать в `resume/profile.json`:
 
-5) Firestore Rules (идея):
-- чтение документа `public/resume` разрешить всем
-- запись разрешить только авторизованным пользователям
-
-Минимальный вариант правил (вставить в Firebase Console → Firestore → Rules):
-
-```js
-rules_version = '2';
-service cloud.firestore {
-  match /databases/{database}/documents {
-    match /public/resume {
-      allow read: if true;
-      allow write: if request.auth != null;
-    }
-  }
-}
+```json
+{ "photoUrl": "./avatar.jpg" }
 ```
-
-После этого:
-- зайдите в `resume/admin.html`, выполните вход
-- нажмите “Заполнить демо” → “Сохранить”
-- откройте `resume/index.html` и убедитесь, что источник стал `firestore`
 
 ## Настройка AI (Vercel + OpenRouter)
 
@@ -79,17 +65,18 @@ service cloud.firestore {
 
 После деплоя AI‑кнопка начнёт работать автоматически (через `/api/match`).
 
-## Альтернатива: GitHub Pages + внешний API
+## Платформа: пользователи создают своё резюме (Supabase)
 
-Если хотите оставить GitHub Pages, то понадобится внешний API (например Cloudflare Worker). Тогда в `resume/config.js` задайте `aiApiBaseUrl`.
+1) В Supabase создайте проект и включите Email provider (magic link/OTP).
+2) Выполните SQL из `supabase/schema.sql` в Supabase SQL Editor.
+3) В Supabase Auth → URL Configuration добавьте Site URL и Redirect URLs для вашего домена Vercel.
 
-## Деплой фронтенда на GitHub Pages
+Страницы:
+- `/app/` — вход по email
+- `/app/dashboard.html` — редактор и Publish/Unpublish
+- `/u/<slug>` — публичная страница (доступна только после Publish)
 
-1) Создайте новый репозиторий на новом GitHub аккаунте.
-2) Запушьте содержимое папки `HH AI` в этот репозиторий.
-3) В репозитории GitHub → Settings → Pages:
-- Source: Deploy from a branch
-- Branch: `main`, folder `/ (root)`
+## Деплой на Vercel
 
-Сайт будет доступен по ссылке GitHub Pages, а резюме по пути `/resume/`.
+Импортируйте репозиторий в Vercel (preset **Other**) и добавьте env vars OpenRouter (см. выше).
 
