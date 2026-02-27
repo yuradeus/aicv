@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta name="theme-color" content="#0b1020" />
+    <title>Админка резюме</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="container">
+      <div class="topbar">
+        <div class="brand">
+          <div class="avatar" aria-hidden="true"></div>
+          <div class="brandText">
+            <div class="title">Админка</div>
+            <div class="subtitle">Редактирование резюме (только вы)</div>
+          </div>
+        </div>
+        <div class="topActions">
+          <a class="btn btnSmall" href="./index.html">На сайт</a>
+          <button class="btn btnSmall" id="logoutBtn" type="button" style="display:none;">Выйти</button>
+        </div>
+      </div>
+
+      <div class="grid">
+        <section class="card" aria-label="Вход">
+          <div class="cardHeader">
+            <div class="cardTitle">Вход</div>
+            <div class="cardSub">
+              Используется Firebase Auth (email + password). Пароль хранится только у Firebase.
+            </div>
+          </div>
+          <div class="cardBody">
+            <div id="authBox">
+              <label class="fieldLabel" for="email">Email</label>
+              <input id="email" type="email" inputmode="email" placeholder="you@example.com" />
+
+              <label class="fieldLabel" for="password">Пароль</label>
+              <input id="password" type="password" placeholder="••••••••" />
+
+              <div style="margin-top: 12px; display:flex; gap:10px; flex-wrap:wrap;">
+                <button class="btn btnPrimary" id="loginBtn" type="button">Войти</button>
+              </div>
+
+              <div class="hint">
+                Первый раз: создайте пользователя в Firebase Console → Authentication → Users (или включите Email/Password и зарегистрируйтесь).
+              </div>
+              <div class="status" id="authStatus"></div>
+            </div>
+          </div>
+        </section>
+
+        <section class="card" aria-label="Редактор">
+          <div class="cardHeader">
+            <div class="cardTitle">Резюме (Markdown)</div>
+            <div class="cardSub">
+              Сохранится в Firestore: документ <span class="mono">public/resume</span>.
+            </div>
+          </div>
+          <div class="cardBody">
+            <label class="fieldLabel" for="name">Имя (в шапке)</label>
+            <input id="name" type="text" placeholder="Ваше Имя" />
+
+            <label class="fieldLabel" for="title">Подзаголовок</label>
+            <input id="title" type="text" placeholder="Должность • Город • Формат" />
+
+            <label class="fieldLabel" for="markdown">Markdown</label>
+            <textarea id="markdown" placeholder="# Ваше Имя&#10;&#10;..."></textarea>
+
+            <div style="margin-top: 12px; display:flex; gap:10px; flex-wrap:wrap;">
+              <button class="btn btnPrimary" id="saveBtn" type="button" disabled>Сохранить</button>
+              <button class="btn" id="loadBtn" type="button" disabled>Загрузить из базы</button>
+              <button class="btn" id="fillDemoBtn" type="button" disabled>Заполнить демо</button>
+            </div>
+
+            <div class="status" id="editorStatus"></div>
+          </div>
+        </section>
+      </div>
+
+      <div class="footer">
+        <div class="hint">
+          Важно: Firestore Rules должны разрешать запись только авторизованному пользователю.
+        </div>
+      </div>
+    </div>
+
+    <script type="module" src="./admin.js"></script>
+  </body>
+</html>
+

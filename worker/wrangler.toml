@@ -1,0 +1,8 @@
+name = "resume-ai-match"
+main = "src/index.js"
+compatibility_date = "2026-02-27"
+
+[vars]
+# Optional: hardcode your public resume URL for context in prompt, or leave empty.
+PUBLIC_RESUME_URL = ""
+
