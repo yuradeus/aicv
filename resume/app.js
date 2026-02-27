@@ -37,6 +37,8 @@ const DEMO = {
 `,
 };
 
+let currentResumeMarkdown = DEMO.resumeMarkdown;
+
 function cfg() {
   return window.__RESUME_CONFIG__ || { aiApiBaseUrl: "" };
 }
@@ -65,6 +67,7 @@ function renderResume(data, sourceLabel) {
 
   const content = document.getElementById("resumeContent");
   const md = data?.resumeMarkdown || DEMO.resumeMarkdown;
+  currentResumeMarkdown = md;
   content.innerHTML = window.marked.parse(md);
 }
 
@@ -148,13 +151,14 @@ async function initAiMatch() {
   matchBtn.addEventListener("click", async () => {
     const base = (cfg().aiApiBaseUrl || "").trim().replace(/\/+$/, "");
     if (!base) {
-      setStatus("AI API не настроен. Владельцу: укажите aiApiBaseUrl в resume/config.js");
+      setStatus("AI пока не настроен. Владельцу: разверните Cloudflare Worker и укажите aiApiBaseUrl в resume/config.js");
       return;
     }
 
     const payload = {
       vacancyUrl: vacancyUrl.value.trim() || null,
       vacancyText: vacancyText.value.trim() || null,
+      resumeText: (currentResumeMarkdown || "").slice(0, 25000),
     };
 
     if (!payload.vacancyUrl && !payload.vacancyText) {

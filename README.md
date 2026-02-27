@@ -67,10 +67,7 @@ wrangler login
 ```bash
 cd worker
 wrangler secret put GEMINI_API_KEY
-wrangler secret put RESUME_TEXT
 ```
-
-`RESUME_TEXT` — короткая текстовая версия резюме (можно прямо скопировать из Markdown).
 
 3) Деплой воркера:
 

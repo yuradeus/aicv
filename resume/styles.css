@@ -1,15 +1,13 @@
 :root{
-  --bg:#0b1020;
-  --card:#111833;
-  --text:#e7ebff;
-  --muted:#aab3e6;
-  --accent:#7c5cff;
-  --accent2:#24c6dc;
-  --border:rgba(255,255,255,.10);
-  --shadow: 0 18px 55px rgba(0,0,0,.45);
-  --radius: 18px;
+  --bg:#ffffff;
+  --card:#ffffff;
+  --text:#111111;
+  --muted:#555555;
+  --accent:#111111;
+  --border:#111111;
+  --radius: 12px;
   --max: 980px;
-  color-scheme: dark;
+  color-scheme: light;
 }
 
 *{box-sizing:border-box}
@@ -17,11 +15,7 @@ html,body{height:100%}
 body{
   margin:0;
   font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Inter, Arial, "Apple Color Emoji","Segoe UI Emoji";
-  background:
-    radial-gradient(1200px 600px at 15% 5%, rgba(124,92,255,.35), transparent 55%),
-    radial-gradient(900px 500px at 85% 15%, rgba(36,198,220,.22), transparent 55%),
-    radial-gradient(900px 600px at 50% 120%, rgba(124,92,255,.18), transparent 55%),
-    var(--bg);
+  background: var(--bg);
   color:var(--text);
 }
 
@@ -37,11 +31,9 @@ a{color:inherit}
   padding:14px 16px;
   border:1px solid var(--border);
   border-radius:var(--radius);
-  background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
-  box-shadow: var(--shadow);
+  background: var(--card);
   position: sticky;
-  top: 10px;
-  backdrop-filter: blur(10px);
+  top: 0;
   z-index: 10;
 }
 
@@ -53,8 +45,7 @@ a{color:inherit}
 }
 .avatar{
   width:38px;height:38px;border-radius:12px;
-  background: linear-gradient(135deg, rgba(124,92,255,1), rgba(36,198,220,1));
-  box-shadow: 0 10px 30px rgba(124,92,255,.25);
+  background: #111;
 }
 .brandText{min-width:0}
 .brandText .title{
@@ -77,10 +68,10 @@ a{color:inherit}
 .topActions{display:flex; gap:10px; align-items:center}
 .btn{
   border:1px solid var(--border);
-  background: rgba(255,255,255,.04);
+  background: #fff;
   color:var(--text);
   padding:10px 12px;
-  border-radius:14px;
+  border-radius:10px;
   cursor:pointer;
   font-weight:600;
   transition:.15s transform,.15s background,.15s border-color;
@@ -89,12 +80,13 @@ a{color:inherit}
   gap:10px;
   align-items:center;
 }
-.btn:hover{transform: translateY(-1px); background: rgba(255,255,255,.06); border-color: rgba(255,255,255,.16);}
+.btn:hover{transform: translateY(-1px); background: #f3f3f3;}
 .btnPrimary{
-  background: linear-gradient(135deg, rgba(124,92,255,.95), rgba(36,198,220,.85));
-  border-color: rgba(255,255,255,.14);
+  background: #111;
+  border-color: #111;
+  color: #fff;
 }
-.btnPrimary:hover{background: linear-gradient(135deg, rgba(124,92,255,1), rgba(36,198,220,1));}
+.btnPrimary:hover{background: #000;}
 .btnSmall{padding:8px 10px; border-radius:12px; font-size:13px}
 
 .grid{
@@ -111,8 +103,7 @@ a{color:inherit}
 .card{
   border:1px solid var(--border);
   border-radius:var(--radius);
-  background: rgba(255,255,255,.04);
-  box-shadow: var(--shadow);
+  background: var(--card);
   overflow:hidden;
 }
 .cardHeader{
@@ -142,8 +133,8 @@ a{color:inherit}
 .resumeContent p{margin:10px 0}
 .resumeContent ul{margin:10px 0 10px 22px}
 .resumeContent code{
-  background: rgba(255,255,255,.06);
-  border:1px solid rgba(255,255,255,.10);
+  background: #f3f3f3;
+  border:1px solid #111;
   padding:2px 6px;
   border-radius:10px;
 }
@@ -162,19 +153,19 @@ a{color:inherit}
   color:var(--muted);
   margin: 12px 0 6px;
 }
-input[type="url"], textarea{
+input[type="url"], input[type="text"], input[type="email"], input[type="password"], textarea{
   width:100%;
-  border:1px solid rgba(255,255,255,.12);
-  background: rgba(10,14,30,.55);
+  border:1px solid #111;
+  background: #fff;
   color: var(--text);
   padding:10px 12px;
-  border-radius:14px;
+  border-radius:10px;
   outline:none;
 }
 textarea{min-height: 120px; resize: vertical;}
-input[type="url"]:focus, textarea:focus{
-  border-color: rgba(124,92,255,.55);
-  box-shadow: 0 0 0 3px rgba(124,92,255,.12);
+input[type="url"]:focus, input[type="text"]:focus, input[type="email"]:focus, input[type="password"]:focus, textarea:focus{
+  border-color: #000;
+  box-shadow: 0 0 0 3px rgba(0,0,0,.08);
 }
 
 .hint{font-size:12.5px; color: var(--muted); margin-top:8px; line-height:1.35;}
@@ -186,8 +177,8 @@ input[type="url"]:focus, textarea:focus{
 
 .resultBox{
   margin-top: 12px;
-  border:1px solid rgba(255,255,255,.12);
-  background: rgba(255,255,255,.03);
+  border:1px solid #111;
+  background: #fff;
   border-radius: 16px;
   padding: 12px 12px;
 }
@@ -198,15 +189,15 @@ input[type="url"]:focus, textarea:focus{
   gap: 10px;
 }
 .badge{
-  border:1px solid rgba(255,255,255,.12);
+  border:1px solid #111;
   padding: 6px 10px;
   border-radius: 999px;
   font-weight: 800;
   letter-spacing: .2px;
 }
-.badgeGood{background: rgba(36,198,220,.10); border-color: rgba(36,198,220,.25);}
-.badgeOk{background: rgba(124,92,255,.10); border-color: rgba(124,92,255,.25);}
-.badgeBad{background: rgba(255,120,120,.08); border-color: rgba(255,120,120,.22);}
+.badgeGood{background: #111; color:#fff;}
+.badgeOk{background: #fff; color:#111;}
+.badgeBad{background: #fff; color:#111;}
 .resultText{
   margin-top:10px;
   line-height:1.45;

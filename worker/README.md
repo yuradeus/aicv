@@ -5,7 +5,7 @@
 ## Что делает
 
 - `POST /match` — принимает ссылку на вакансию или текст вакансии
-- сравнивает с резюме (берёт `RESUME_TEXT` из env)
+- сравнивает с резюме (резюме отправляется с фронтенда как `resumeText`)
 - возвращает JSON: `{ percent, summary }`
 
 ## Деплой (через Wrangler)
@@ -22,7 +22,6 @@ wrangler login
 ```bash
 cd worker
 wrangler secret put GEMINI_API_KEY
-wrangler secret put RESUME_TEXT
 ```
 
 3) Запуск локально:

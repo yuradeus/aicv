@@ -7,6 +7,7 @@
  * Input JSON:
  * - vacancyUrl?: string | null
  * - vacancyText?: string | null
+ * - resumeText?: string | null
  *
  * Output JSON:
  * - percent: number
@@ -66,6 +67,11 @@ function clampPct(x) {
 function safeSummary(s) {
   const str = String(s || "").trim();
   return str.length > 0 ? str.slice(0, 900) : "—";
+}
+
+function safeResumeText(s) {
+  const str = String(s || "").trim();
+  return str.length > 0 ? str.slice(0, 25_000) : "";
 }
 
 async function geminiMatch({ apiKey, resumeText, vacancyText }) {
@@ -149,23 +155,14 @@ export default {
 
     const vacancyUrl = typeof body?.vacancyUrl === "string" ? body.vacancyUrl.trim() : "";
     const vacancyTextInput = typeof body?.vacancyText === "string" ? body.vacancyText.trim() : "";
+    const resumeTextInput = safeResumeText(body?.resumeText);
 
     if (!vacancyUrl && !vacancyTextInput) {
       return json({ error: "vacancyUrl or vacancyText required" }, { status: 400 });
     }
 
-    // Resume text is not fetched from Firestore here (to keep worker simple).
-    // In v1 we use a short embedded resume summary set via env var later.
-    // For now we return a helpful error if not configured.
-    const resumeText = (env.RESUME_TEXT || "").trim();
-    if (!resumeText) {
-      return json(
-        {
-          error:
-            "Worker not configured: set RESUME_TEXT as a Worker variable (wrangler secret/vars).",
-        },
-        { status: 500 }
-      );
+    if (!resumeTextInput) {
+      return json({ error: "resumeText required" }, { status: 400 });
     }
 
     let vacancyText = vacancyTextInput;
@@ -193,7 +190,7 @@ export default {
     }
 
     try {
-      const out = await geminiMatch({ apiKey, resumeText, vacancyText });
+      const out = await geminiMatch({ apiKey, resumeText: resumeTextInput, vacancyText });
       return json(out);
     } catch (e) {
       return json(
