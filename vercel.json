@@ -1,8 +1,9 @@
 {
   "rewrites": [
-    { "source": "/", "destination": "/resume/" },
-    { "source": "/app", "destination": "/app/" },
-    { "source": "/u/:slug", "destination": "/u/?slug=:slug" }
+    { "source": "/", "destination": "/public/" },
+    { "source": "/myfirsresume", "destination": "/myfirsresume/" },
+    { "source": "/u/:slug", "destination": "/u/?slug=:slug" },
+    { "source": "/app", "destination": "/app/" }
   ]
 }
 

@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Редактор резюме</title>
+    <link rel="stylesheet" href="../resume/styles.css" />
+  </head>
+  <body>
+    <div class="container">
+      <div class="topbar">
+        <div class="brand">
+          <div class="avatar" aria-hidden="true"></div>
+          <div class="brandText">
+            <div class="title">Редактор</div>
+            <div class="subtitle">Сохранение = публикация на главной странице</div>
+          </div>
+        </div>
+        <div class="topActions">
+          <a class="btn btnSmall" href="/">Открыть публичную</a>
+        </div>
+      </div>
+
+      <div class="grid" style="grid-template-columns: 1fr;">
+        <section class="card" id="loginCard">
+          <div class="cardHeader">
+            <div class="cardTitle">Войти по email</div>
+            <div class="cardSub">Отправим magic link. После входа откроется редактор.</div>
+          </div>
+          <div class="cardBody">
+            <label class="fieldLabel" for="email">Email</label>
+            <input id="email" type="email" placeholder="you@example.com" />
+            <div style="margin-top: 12px;">
+              <button class="btn btnPrimary" id="sendBtn" type="button">Получить ссылку</button>
+            </div>
+            <div class="status" id="loginStatus"></div>
+          </div>
+        </section>
+
+        <section class="card" id="editorCard" style="display:none;">
+          <div class="cardHeader">
+            <div class="cardTitle">Резюме</div>
+            <div class="cardSub">Нажмите “Сохранить” — и оно сразу станет доступно на корне домена.</div>
+          </div>
+          <div class="cardBody">
+            <label class="fieldLabel" for="displayName">Имя</label>
+            <input id="displayName" type="text" placeholder="Ваше Имя" />
+
+            <label class="fieldLabel" for="title">Заголовок</label>
+            <input id="title" type="text" placeholder="Должность • Город • Формат" />
+
+            <label class="fieldLabel" for="photoUrl">Фото (URL)</label>
+            <input id="photoUrl" type="url" placeholder="https://..." />
+
+            <label class="fieldLabel" for="markdown">Markdown</label>
+            <textarea id="markdown" placeholder="# Ваше Имя&#10;&#10;..." style="min-height: 360px;"></textarea>
+
+            <div style="margin-top: 12px; display:flex; gap:10px; flex-wrap:wrap;">
+              <button class="btn btnPrimary" id="saveBtn" type="button">Сохранить и опубликовать</button>
+            </div>
+            <div class="status" id="saveStatus"></div>
+            <div class="hint">Публичная страница: <span class="mono" id="publicLink">—</span></div>
+          </div>
+        </section>
+      </div>
+    </div>
+
+    <script src="/app/supabase-config.js"></script>
+    <script type="module" src="./editor.js"></script>
+  </body>
+</html>
+
