@@ -1,9 +1,15 @@
 {
   "rewrites": [
-    { "source": "/", "destination": "/public/" },
-    { "source": "/myfirsresume", "destination": "/myfirsresume/" },
-    { "source": "/u/:slug", "destination": "/u/?slug=:slug" },
-    { "source": "/app", "destination": "/app/" }
+    { "source": "/", "destination": "/home/index.html" },
+    { "source": "/home", "destination": "/home/index.html" },
+    { "source": "/home/", "destination": "/home/index.html" },
+
+    { "source": "/myfirsresume", "destination": "/myfirsresume/index.html" },
+    { "source": "/myfirsresume/", "destination": "/myfirsresume/index.html" },
+
+    { "source": "/u/:slug", "destination": "/u/index.html?slug=:slug" },
+    { "source": "/app", "destination": "/app/index.html" },
+    { "source": "/app/", "destination": "/app/index.html" }
   ]
 }
 

@@ -1,7 +1,7 @@
 import { supabase } from "../app/supabase.js";
 
 const sb = supabase();
-const OWNER_SLUG = "home"; // fixed published slug for your personal resume
+const OWNER_SLUG = "home";
 
 function el(id) {
   return document.getElementById(id);
