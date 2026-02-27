@@ -53,30 +53,35 @@ service cloud.firestore {
 - нажмите “Заполнить демо” → “Сохранить”
 - откройте `resume/index.html` и убедитесь, что источник стал `firestore`
 
-## Настройка AI (Cloudflare Worker)
+## Настройка AI (Vercel + OpenRouter)
 
-1) Установите и залогиньтесь в Wrangler:
+Мы используем OpenRouter (OpenAI‑совместимый endpoint) и модель DeepSeek V3.
 
-```bash
-npm i -g wrangler
-wrangler login
-```
+Документация OpenRouter:
+- API chat completions: `https://openrouter.ai/docs/api-reference/chat-completion`
+- Быстрый старт: `https://openrouter.ai/docs/quick-start`
 
-2) Перейдите в `worker/` и задайте секреты:
+На Vercel функция находится в `api/match.js` и вызывается фронтендом по `POST /api/match`.
 
-```bash
-cd worker
-wrangler secret put GEMINI_API_KEY
-```
+### Переменные окружения на Vercel
 
-3) Деплой воркера:
+- `OPENROUTER_API_KEY` — **обязательно**
+- `OPENROUTER_MODEL` — опционально (по умолчанию `deepseek/deepseek-chat-v3-0324`)
+- `OPENROUTER_SITE_URL` — опционально (для заголовка `HTTP-Referer`)
+- `OPENROUTER_APP_NAME` — опционально (для заголовка `X-OpenRouter-Title`)
 
-```bash
-wrangler deploy
-```
+## Деплой на Vercel (рекомендуется)
 
-4) Впишите URL воркера в `resume/config.js`:
-- `aiApiBaseUrl: "https://<your-worker>.<your-subdomain>.workers.dev"`
+1) Зайдите на Vercel и импортируйте репозиторий GitHub `yuradeus/aicv`.
+2) Framework preset: **Other** (без сборки).
+3) Добавьте Environment Variables (см. выше).
+4) Deploy.
+
+После деплоя AI‑кнопка начнёт работать автоматически (через `/api/match`).
+
+## Альтернатива: GitHub Pages + внешний API
+
+Если хотите оставить GitHub Pages, то понадобится внешний API (например Cloudflare Worker). Тогда в `resume/config.js` задайте `aiApiBaseUrl`.
 
 ## Деплой фронтенда на GitHub Pages
 

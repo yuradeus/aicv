@@ -150,10 +150,7 @@ async function initAiMatch() {
 
   matchBtn.addEventListener("click", async () => {
     const base = (cfg().aiApiBaseUrl || "").trim().replace(/\/+$/, "");
-    if (!base) {
-      setStatus("AI пока не настроен. Владельцу: разверните Cloudflare Worker и укажите aiApiBaseUrl в resume/config.js");
-      return;
-    }
+    const endpoint = base ? `${base}/match` : "/api/match";
 
     const payload = {
       vacancyUrl: vacancyUrl.value.trim() || null,
@@ -169,7 +166,7 @@ async function initAiMatch() {
     setStatus("Анализирую…");
     matchBtn.disabled = true;
     try {
-      const res = await fetch(`${base}/match`, {
+      const res = await fetch(endpoint, {
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify(payload),
