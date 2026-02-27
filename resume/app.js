@@ -107,6 +107,19 @@ function initCopyLink() {
   });
 }
 
+function initLoginVisibility() {
+  const link = document.getElementById("loginLink");
+  if (!link) return;
+
+  const url = new URL(window.location.href);
+  const show =
+    url.searchParams.get("admin") === "1" ||
+    url.searchParams.get("login") === "1" ||
+    window.location.hash === "#admin";
+
+  link.style.display = show ? "inline-flex" : "none";
+}
+
 function badgeByPercent(pct) {
   if (pct >= 75) return { cls: "badgeGood", label: "Сильный матч" };
   if (pct >= 45) return { cls: "badgeOk", label: "Средний матч" };
@@ -137,16 +150,8 @@ function showResult({ percent, summary }) {
 
 async function initAiMatch() {
   const matchBtn = document.getElementById("matchBtn");
-  const clearBtn = document.getElementById("clearBtn");
   const vacancyUrl = document.getElementById("vacancyUrl");
   const vacancyText = document.getElementById("vacancyText");
-
-  clearBtn.addEventListener("click", () => {
-    vacancyUrl.value = "";
-    vacancyText.value = "";
-    setStatus("");
-    document.getElementById("resultBox").style.display = "none";
-  });
 
   matchBtn.addEventListener("click", async () => {
     const base = (cfg().aiApiBaseUrl || "").trim().replace(/\/+$/, "");
@@ -191,6 +196,7 @@ async function initAiMatch() {
 
 setText("buildInfo", "resume-v1");
 initCopyLink();
+initLoginVisibility();
 initResume();
 initAiMatch();
 
