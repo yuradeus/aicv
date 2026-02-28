@@ -72,11 +72,39 @@ function showResult({ percent, summary }) {
 
 let currentResumeMarkdown = "";
 
+function showWrap(id, show) {
+  const w = el(id);
+  if (w) w.style.display = show ? "block" : "none";
+}
+
+function setBlock(wrapId, outId, text) {
+  const t = String(text || "").trim();
+  showWrap(wrapId, Boolean(t));
+  const out = el(outId);
+  if (out) out.textContent = t;
+}
+
+function addContact(list, label, href, text) {
+  if (!href || !text) return;
+  const li = document.createElement("li");
+  const a = document.createElement("a");
+  a.href = href;
+  a.textContent = text;
+  if (href.startsWith("http://") || href.startsWith("https://")) {
+    a.target = "_blank";
+    a.rel = "noopener noreferrer";
+  }
+  li.append(`${label}: `);
+  li.appendChild(a);
+  list.appendChild(li);
+}
+
 async function loadResume() {
   const slug = getSlug();
   if (!slug) {
     setText("subline", "Некорректная ссылка.");
-    el("resumeContent").textContent = "Slug не найден.";
+    showWrap("aboutWrap", true);
+    setText("aboutOut", "Slug не найден.");
     return;
   }
 
@@ -91,12 +119,14 @@ async function loadResume() {
   if (error) {
     console.error(error);
     setText("subline", "Ошибка загрузки.");
-    el("resumeContent").textContent = "Ошибка загрузки.";
+    showWrap("aboutWrap", true);
+    setText("aboutOut", "Ошибка загрузки.");
     return;
   }
   if (!data) {
     setText("subline", "Резюме не найдено или приватно.");
-    el("resumeContent").textContent = "Резюме не найдено.";
+    showWrap("aboutWrap", true);
+    setText("aboutOut", "Резюме не найдено.");
     return;
   }
 
@@ -107,12 +137,32 @@ async function loadResume() {
   setText("subline", "");
 
   currentResumeMarkdown = data.markdown || "";
-  el("resumeContent").innerHTML = window.marked.parse(currentResumeMarkdown || "");
-  for (const a of el("resumeContent").querySelectorAll("a")) {
-    const href = a.getAttribute("href") || "";
-    if (href.startsWith("http://") || href.startsWith("https://")) {
-      a.setAttribute("target", "_blank");
-      a.setAttribute("rel", "noopener noreferrer");
+  setBlock("aboutWrap", "aboutOut", data.about);
+  setBlock("experienceWrap", "experienceOut", data.experience);
+  setBlock("educationWrap", "educationOut", data.education);
+  setBlock("skillsWrap", "skillsOut", data.skills);
+
+  const list = el("contactsList");
+  if (list) list.innerHTML = "";
+  const tg = String(data.telegram || "").trim().replace(/^@+/, "");
+  const email = String(data.email || "").trim();
+  const phoneRaw = String(data.phone || "").trim();
+  const phoneDigits = phoneRaw.replace(/[^\d+]/g, "");
+  const phoneHref = phoneDigits ? `tel:${phoneDigits}` : "";
+
+  const hasContacts = Boolean(tg || email || phoneRaw || String(data.contacts || "").trim());
+  showWrap("contactsWrap", hasContacts);
+  if (list) {
+    if (tg) addContact(list, "Telegram", `https://t.me/${tg}`, `@${tg}`);
+    if (email) addContact(list, "Email", `mailto:${email}`, email);
+    if (phoneRaw) addContact(list, "Phone", phoneHref, phoneRaw);
+
+    const other = String(data.contacts || "").trim();
+    if (other) {
+      const li = document.createElement("li");
+      li.className = "classicText";
+      li.textContent = other;
+      list.appendChild(li);
     }
   }
 }

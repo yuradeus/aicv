@@ -156,6 +156,25 @@ a{color:inherit}
   font-size: 12.5px;
 }
 
+.classicSection{
+  margin-top: 14px;
+}
+.classicTitle{
+  font-weight: 800;
+  font-size: 13px;
+  letter-spacing: .2px;
+  margin: 14px 0 8px;
+}
+.classicText{
+  white-space: pre-wrap;
+  line-height: 1.5;
+  font-size: 15px;
+}
+.classicList{
+  margin: 6px 0 0 18px;
+}
+.classicList li{margin: 4px 0;}
+
 .fieldLabel{
   display:block;
   font-size:12.5px;
