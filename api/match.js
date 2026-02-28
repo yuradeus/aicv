@@ -45,10 +45,18 @@ function textToPlain(html) {
 function zamesinVacancyToText(vacancy) {
   if (!vacancy) return "";
   const parts = [];
+  parts.push("ИСТОЧНИК: zamesin.ru");
+  if (vacancy.id) parts.push(`ID: ${textToPlain(vacancy.id)}`);
   if (vacancy.title) parts.push(`ВАКАНСИЯ: ${textToPlain(vacancy.title)}`);
   if (vacancy.subtitle) parts.push(`Подзаголовок: ${textToPlain(vacancy.subtitle)}`);
   if (vacancy.description) parts.push(`Коротко: ${textToPlain(vacancy.description)}`);
   if (vacancy.intro) parts.push(`Введение: ${textToPlain(vacancy.intro)}`);
+  if (Array.isArray(vacancy.categories) && vacancy.categories.length) {
+    parts.push(`Категории: ${vacancy.categories.map(textToPlain).filter(Boolean).join(", ")}`);
+  }
+  if (Array.isArray(vacancy.tags) && vacancy.tags.length) {
+    parts.push(`Теги: ${vacancy.tags.map(textToPlain).filter(Boolean).join(", ")}`);
+  }
 
   const addListSection = (title, items) => {
     const arr = Array.isArray(items) ? items.filter(Boolean) : [];
@@ -76,6 +84,44 @@ function zamesinVacancyToText(vacancy) {
         for (const it of s.points) parts.push(`- ${textToPlain(it)}`);
       }
     }
+  }
+
+  if (Array.isArray(vacancy.hiringProcess) && vacancy.hiringProcess.length) {
+    parts.push("");
+    parts.push("Процесс найма:");
+    vacancy.hiringProcess.forEach((step, i) => {
+      if (step == null) return;
+      if (typeof step === "string") {
+        parts.push(`${i + 1}. ${textToPlain(step)}`);
+        return;
+      }
+      if (typeof step === "object") {
+        const title = textToPlain(step.title || step.name || "");
+        const text = textToPlain(step.text || step.description || "");
+        if (title && text) parts.push(`${i + 1}. ${title} — ${text}`);
+        else if (title) parts.push(`${i + 1}. ${title}`);
+        else if (text) parts.push(`${i + 1}. ${text}`);
+        return;
+      }
+      parts.push(`${i + 1}. ${textToPlain(String(step))}`);
+    });
+  }
+
+  if (vacancy.contactUrl) {
+    parts.push("");
+    parts.push(`Ссылка для отклика/контакта: ${String(vacancy.contactUrl).trim()}`);
+  }
+
+  // "Ничего не упустить": приложим сырой JSON вакансии (обрежется общим лимитом).
+  try {
+    const raw = JSON.stringify(vacancy);
+    if (raw) {
+      parts.push("");
+      parts.push("RAW_JSON:");
+      parts.push(raw);
+    }
+  } catch {
+    // ignore
   }
 
   return parts.join("\n").trim().slice(0, 60_000);
