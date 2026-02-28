@@ -9,6 +9,8 @@
  * - OPENROUTER_APP_NAME (optional, for attribution header X-OpenRouter-Title)
  */
 
+const vm = require("vm");
+
 function sendJson(res, status, data) {
   res.statusCode = status;
   res.setHeader("content-type", "application/json; charset=utf-8");
@@ -34,12 +36,83 @@ function textToPlain(html) {
       .replace(/<script[\s\S]*?<\/script>/gi, " ")
       .replace(/<style[\s\S]*?<\/style>/gi, " ")
       .replace(/<[^>]+>/g, " ")
+      .replace(/&nbsp;/gi, " ")
       .replace(/\s+/g, " ")
       .trim()
   );
 }
 
+function zamesinVacancyToText(vacancy) {
+  if (!vacancy) return "";
+  const parts = [];
+  if (vacancy.title) parts.push(`ВАКАНСИЯ: ${textToPlain(vacancy.title)}`);
+  if (vacancy.subtitle) parts.push(`Подзаголовок: ${textToPlain(vacancy.subtitle)}`);
+  if (vacancy.description) parts.push(`Коротко: ${textToPlain(vacancy.description)}`);
+  if (vacancy.intro) parts.push(`Введение: ${textToPlain(vacancy.intro)}`);
+
+  const addListSection = (title, items) => {
+    const arr = Array.isArray(items) ? items.filter(Boolean) : [];
+    if (!arr.length) return;
+    parts.push("");
+    parts.push(title);
+    for (const x of arr) parts.push(`- ${textToPlain(x)}`);
+  };
+
+  addListSection("Детали:", vacancy.cardDetails);
+
+  if (Array.isArray(vacancy.sections) && vacancy.sections.length) {
+    parts.push("");
+    parts.push("Секции:");
+    for (const s of vacancy.sections) {
+      if (!s) continue;
+      const title = textToPlain(s.title || s.name || "Раздел");
+      parts.push("");
+      parts.push(title);
+      if (s.text) parts.push(textToPlain(s.text));
+      if (Array.isArray(s.items)) {
+        for (const it of s.items) parts.push(`- ${textToPlain(it)}`);
+      }
+      if (Array.isArray(s.points)) {
+        for (const it of s.points) parts.push(`- ${textToPlain(it)}`);
+      }
+    }
+  }
+
+  return parts.join("\n").trim().slice(0, 60_000);
+}
+
+async function fetchZamesinVacancyText(vacancyUrl) {
+  const u = new URL(vacancyUrl);
+  const id = (u.searchParams.get("id") || "").trim();
+  if (!id) throw new Error("Missing id in zamesin vacancy url");
+
+  const jsUrl = new URL("/jobs/data/vacancies.js?v=3", u.origin).toString();
+  const res = await fetch(jsUrl, {
+    headers: {
+      "user-agent":
+        "Mozilla/5.0 (compatible; ResumeMatchBot/1.0; +https://example.invalid)",
+      accept: "*/*",
+    },
+  });
+  const js = await res.text();
+  if (!res.ok) throw new Error(`zamesin vacancies.js fetch failed: ${res.status}`);
+
+  // Safe-ish evaluation in isolated context; we only need the `vacancies` array.
+  const code = `${js}\n;vacancies`;
+  const vacanciesArr = vm.runInNewContext(code, Object.create(null), { timeout: 1000 });
+  if (!Array.isArray(vacanciesArr)) throw new Error("zamesin vacancies parse failed");
+
+  const vacancy = vacanciesArr.find((v) => v && String(v.id) === id);
+  if (!vacancy) throw new Error(`zamesin vacancy id not found: ${id}`);
+  return zamesinVacancyToText(vacancy);
+}
+
 async function fetchVacancyText(url) {
+  const u = new URL(url);
+  if (u.hostname === "zamesin.ru" && u.pathname === "/jobs/vacancy.html") {
+    return await fetchZamesinVacancyText(url);
+  }
+
   const res = await fetch(url, {
     redirect: "follow",
     headers: {
