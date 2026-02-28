@@ -75,8 +75,22 @@
             <label class="fieldLabel" for="skills">Навыки</label>
             <textarea id="skills" placeholder="Стек, технологии, инструменты"></textarea>
 
-            <label class="fieldLabel" for="contacts">Контакты</label>
-            <textarea id="contacts" placeholder="Email, Telegram, GitHub, LinkedIn"></textarea>
+            <label class="fieldLabel">Контакты</label>
+            <div class="grid" style="grid-template-columns: 1fr 1fr; margin-top: 0;">
+              <div>
+                <label class="fieldLabel" for="telegram">Telegram</label>
+                <input id="telegram" type="text" placeholder="@username" />
+              </div>
+              <div>
+                <label class="fieldLabel" for="emailPublic">Почта</label>
+                <input id="emailPublic" type="email" placeholder="you@example.com" />
+              </div>
+            </div>
+            <label class="fieldLabel" for="phone">Телефон</label>
+            <input id="phone" type="text" inputmode="tel" placeholder="+7 999 123-45-67" />
+
+            <label class="fieldLabel" for="contacts">Другие ссылки (опционально)</label>
+            <textarea id="contacts" placeholder="GitHub, LinkedIn и т.п."></textarea>
 
             <div style="margin-top: 12px; display:flex; gap:10px; flex-wrap:wrap;">
               <button class="btn btnPrimary" id="saveBtn" type="button">Сохранить и опубликовать</button>

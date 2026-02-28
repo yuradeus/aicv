@@ -59,6 +59,9 @@ async function ensureRow(userId) {
     experience: "",
     education: "",
     skills: "",
+    telegram: "",
+    email: "",
+    phone: "",
     contacts: "",
     slug: null,
     is_published: false,
@@ -84,6 +87,9 @@ function fillForm(row) {
   el("experience").value = row?.experience || "";
   el("education").value = row?.education || "";
   el("skills").value = row?.skills || "";
+  el("telegram").value = row?.telegram || "";
+  el("emailPublic").value = row?.email || "";
+  el("phone").value = row?.phone || "";
   el("contacts").value = row?.contacts || "";
   el("publicLink").textContent = new URL("/", window.location.origin).toString();
 }
@@ -130,13 +136,57 @@ function buildMarkdown(p) {
     lines.push(p.skills);
   }
 
+  const contactLines = [];
+  const tg = normalizeTelegram(p.telegram);
+  if (tg) contactLines.push(`- Telegram: [${tg.label}](${tg.url})`);
+  const em = normalizeEmail(p.email);
+  if (em) contactLines.push(`- Email: [${em.label}](${em.url})`);
+  const ph = normalizePhone(p.phone);
+  if (ph) contactLines.push(`- Phone: [${ph.label}](${ph.url})`);
+
   if (p.contacts) {
+    contactLines.push(p.contacts);
+  }
+
+  if (contactLines.length) {
     lines.push("");
     lines.push("## Контакты");
-    lines.push(p.contacts);
+    lines.push(contactLines.join("\n"));
   }
 
   return lines.join("\n");
+}
+
+function normalizeTelegram(value) {
+  const raw = String(value || "").trim();
+  if (!raw) return null;
+  let handle = raw;
+  if (handle.startsWith("https://t.me/")) handle = handle.slice("https://t.me/".length);
+  if (handle.startsWith("http://t.me/")) handle = handle.slice("http://t.me/".length);
+  if (handle.startsWith("t.me/")) handle = handle.slice("t.me/".length);
+  handle = handle.replace(/^@+/, "").trim();
+  if (!handle) return null;
+  const safe = handle.replace(/[^\w\d_]/g, "");
+  if (!safe) return null;
+  return { label: `@${safe}`, url: `https://t.me/${safe}` };
+}
+
+function normalizeEmail(value) {
+  const raw = String(value || "").trim();
+  if (!raw) return null;
+  // very light validation
+  if (!raw.includes("@")) return { label: raw, url: `mailto:${encodeURIComponent(raw)}` };
+  return { label: raw, url: `mailto:${raw}` };
+}
+
+function normalizePhone(value) {
+  const raw = String(value || "").trim();
+  if (!raw) return null;
+  const digits = raw.replace(/[^\d+]/g, "");
+  const tel = digits.startsWith("+") ? digits : `+${digits.replace(/^\+/, "")}`;
+  const cleaned = tel.replace(/[^\d+]/g, "");
+  if (cleaned.length < 6) return null;
+  return { label: raw, url: `tel:${cleaned}` };
 }
 
 async function saveAndPublish(userId) {
@@ -152,6 +202,9 @@ async function saveAndPublish(userId) {
     experience: (el("experience").value || "").trim(),
     education: (el("education").value || "").trim(),
     skills: (el("skills").value || "").trim(),
+    telegram: (el("telegram").value || "").trim(),
+    email: (el("emailPublic").value || "").trim(),
+    phone: (el("phone").value || "").trim(),
     contacts: (el("contacts").value || "").trim(),
     slug: OWNER_SLUG,
     is_published: true,

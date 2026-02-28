@@ -15,6 +15,9 @@ create table if not exists public.resumes (
   experience text not null default '',
   education text not null default '',
   skills text not null default '',
+  telegram text not null default '',
+  email text not null default '',
+  phone text not null default '',
   contacts text not null default '',
   slug text unique,
   is_published boolean not null default false,
@@ -29,6 +32,9 @@ alter table public.resumes add column if not exists experience text not null def
 alter table public.resumes add column if not exists education text not null default '';
 alter table public.resumes add column if not exists skills text not null default '';
 alter table public.resumes add column if not exists contacts text not null default '';
+alter table public.resumes add column if not exists telegram text not null default '';
+alter table public.resumes add column if not exists email text not null default '';
+alter table public.resumes add column if not exists phone text not null default '';
 
 create index if not exists resumes_slug_idx on public.resumes (slug);
 

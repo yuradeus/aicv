@@ -93,6 +93,13 @@ async function loadResume() {
 
   currentResumeMarkdown = data.markdown || "";
   el("resumeContent").innerHTML = window.marked.parse(currentResumeMarkdown || "");
+  for (const a of el("resumeContent").querySelectorAll("a")) {
+    const href = a.getAttribute("href") || "";
+    if (href.startsWith("http://") || href.startsWith("https://")) {
+      a.setAttribute("target", "_blank");
+      a.setAttribute("rel", "noopener noreferrer");
+    }
+  }
 
   const meta = [];
   if (data.city) meta.push(`Город: ${data.city}`);
