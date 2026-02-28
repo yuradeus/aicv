@@ -230,7 +230,18 @@ async function saveAndPublish(userId) {
     setStatus("saveStatus", "Сохранено и опубликовано.");
   } catch (e) {
     console.error(e);
-    setStatus("saveStatus", "Ошибка сохранения. Обновите таблицу: запустите свежий supabase/schema.sql в SQL Editor.");
+    const msg = [
+      e?.code ? `code=${e.code}` : null,
+      e?.message ? e.message : null,
+      e?.details ? `details=${e.details}` : null,
+      e?.hint ? `hint=${e.hint}` : null,
+    ]
+      .filter(Boolean)
+      .join(" | ");
+    setStatus(
+      "saveStatus",
+      `Ошибка сохранения. ${msg || "Проверьте таблицу/политики. Запустите свежий supabase/schema.sql в SQL Editor."}`
+    );
   } finally {
     el("saveBtn").disabled = false;
   }
