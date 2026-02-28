@@ -83,7 +83,7 @@ async function loadResume() {
   setText("subline", "Загружаю…");
   const { data, error } = await sb
     .from("resumes")
-    .select("display_name,title,photo_url,markdown,updated_at,is_published,slug")
+    .select("*")
     .eq("slug", slug)
     .eq("is_published", true)
     .maybeSingle();

@@ -41,7 +41,7 @@ async function sendMagicLink() {
 async function ensureRow(userId) {
   const { data, error } = await sb
     .from("resumes")
-    .select("display_name,title,photo_url,markdown,slug,is_published,updated_at")
+    .select("*")
     .eq("user_id", userId)
     .maybeSingle();
   if (error) throw error;
@@ -51,8 +51,15 @@ async function ensureRow(userId) {
     user_id: userId,
     display_name: "",
     title: "",
+    city: "",
+    age: null,
     photo_url: "",
     markdown: "",
+    about: "",
+    experience: "",
+    education: "",
+    skills: "",
+    contacts: "",
     slug: null,
     is_published: false,
   });
@@ -60,7 +67,7 @@ async function ensureRow(userId) {
 
   const { data: again, error: againErr } = await sb
     .from("resumes")
-    .select("display_name,title,photo_url,markdown,slug,is_published,updated_at")
+    .select("*")
     .eq("user_id", userId)
     .maybeSingle();
   if (againErr) throw againErr;
@@ -70,27 +77,97 @@ async function ensureRow(userId) {
 function fillForm(row) {
   el("displayName").value = row?.display_name || "";
   el("title").value = row?.title || "";
+  el("city").value = row?.city || "";
+  el("age").value = row?.age ?? "";
   el("photoUrl").value = row?.photo_url || "";
-  el("markdown").value = row?.markdown || "";
+  el("about").value = row?.about || "";
+  el("experience").value = row?.experience || "";
+  el("education").value = row?.education || "";
+  el("skills").value = row?.skills || "";
+  el("contacts").value = row?.contacts || "";
   el("publicLink").textContent = new URL("/", window.location.origin).toString();
 }
 
+function normalizeAge(value) {
+  const s = String(value || "").trim();
+  if (!s) return null;
+  const n = Number(s.replace(/[^\d]/g, ""));
+  if (!Number.isFinite(n) || n <= 0 || n > 120) return null;
+  return Math.trunc(n);
+}
+
+function buildMarkdown(p) {
+  const lines = [];
+  lines.push(`# ${p.display_name || "—"}`);
+  if (p.title) lines.push(`**Должность:** ${p.title}`);
+
+  const meta = [];
+  if (p.city) meta.push(`Город: ${p.city}`);
+  if (p.age != null) meta.push(`Возраст: ${p.age}`);
+  if (meta.length) lines.push(`**${meta.join(" • ")}**`);
+
+  if (p.about) {
+    lines.push("");
+    lines.push("## О себе");
+    lines.push(p.about);
+  }
+
+  if (p.experience) {
+    lines.push("");
+    lines.push("## Опыт работы");
+    lines.push(p.experience);
+  }
+
+  if (p.education) {
+    lines.push("");
+    lines.push("## Образование");
+    lines.push(p.education);
+  }
+
+  if (p.skills) {
+    lines.push("");
+    lines.push("## Навыки");
+    lines.push(p.skills);
+  }
+
+  if (p.contacts) {
+    lines.push("");
+    lines.push("## Контакты");
+    lines.push(p.contacts);
+  }
+
+  return lines.join("\n");
+}
+
 async function saveAndPublish(userId) {
+  const age = normalizeAge(el("age").value);
   const payload = {
     user_id: userId,
     display_name: (el("displayName").value || "").trim(),
     title: (el("title").value || "").trim(),
+    city: (el("city").value || "").trim(),
+    age,
     photo_url: (el("photoUrl").value || "").trim(),
-    markdown: el("markdown").value || "",
+    about: (el("about").value || "").trim(),
+    experience: (el("experience").value || "").trim(),
+    education: (el("education").value || "").trim(),
+    skills: (el("skills").value || "").trim(),
+    contacts: (el("contacts").value || "").trim(),
     slug: OWNER_SLUG,
     is_published: true,
     updated_at: new Date().toISOString(),
   };
 
-  if (!payload.markdown.trim()) {
-    setStatus("saveStatus", "Markdown не должен быть пустым.");
+  if (!payload.display_name) {
+    setStatus("saveStatus", "Введите имя.");
     return;
   }
+  if (!payload.title) {
+    setStatus("saveStatus", "Введите заголовок (например, должность).");
+    return;
+  }
+
+  payload.markdown = buildMarkdown(payload);
 
   setStatus("saveStatus", "Сохраняю…");
   el("saveBtn").disabled = true;
@@ -100,7 +177,7 @@ async function saveAndPublish(userId) {
     setStatus("saveStatus", "Сохранено и опубликовано.");
   } catch (e) {
     console.error(e);
-    setStatus("saveStatus", "Ошибка сохранения. Проверьте, что выполнен SQL из supabase/schema.sql");
+    setStatus("saveStatus", "Ошибка сохранения. Обновите таблицу: запустите свежий supabase/schema.sql в SQL Editor.");
   } finally {
     el("saveBtn").disabled = false;
   }

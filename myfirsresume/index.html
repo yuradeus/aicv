@@ -49,11 +49,34 @@
             <label class="fieldLabel" for="title">Заголовок</label>
             <input id="title" type="text" placeholder="Должность • Город • Формат" />
 
+            <div class="grid" style="grid-template-columns: 1fr 1fr; margin-top: 0;">
+              <div>
+                <label class="fieldLabel" for="city">Город</label>
+                <input id="city" type="text" placeholder="Москва" />
+              </div>
+              <div>
+                <label class="fieldLabel" for="age">Возраст</label>
+                <input id="age" type="text" inputmode="numeric" placeholder="27" />
+              </div>
+            </div>
+
             <label class="fieldLabel" for="photoUrl">Фото (URL)</label>
             <input id="photoUrl" type="url" placeholder="https://..." />
 
-            <label class="fieldLabel" for="markdown">Markdown</label>
-            <textarea id="markdown" placeholder="# Ваше Имя&#10;&#10;..." style="min-height: 360px;"></textarea>
+            <label class="fieldLabel" for="about">О себе</label>
+            <textarea id="about" placeholder="2–6 предложений о себе"></textarea>
+
+            <label class="fieldLabel" for="experience">Опыт работы</label>
+            <textarea id="experience" placeholder="Компания — роль — даты&#10;- достижение&#10;- достижение" style="min-height: 220px;"></textarea>
+
+            <label class="fieldLabel" for="education">Образование</label>
+            <textarea id="education" placeholder="ВУЗ — специальность — годы"></textarea>
+
+            <label class="fieldLabel" for="skills">Навыки</label>
+            <textarea id="skills" placeholder="Стек, технологии, инструменты"></textarea>
+
+            <label class="fieldLabel" for="contacts">Контакты</label>
+            <textarea id="contacts" placeholder="Email, Telegram, GitHub, LinkedIn"></textarea>
 
             <div style="margin-top: 12px; display:flex; gap:10px; flex-wrap:wrap;">
               <button class="btn btnPrimary" id="saveBtn" type="button">Сохранить и опубликовать</button>

@@ -7,12 +7,28 @@ create table if not exists public.resumes (
   user_id uuid primary key references auth.users (id) on delete cascade,
   display_name text not null default '',
   title text not null default '',
+  city text not null default '',
+  age int,
   photo_url text not null default '',
   markdown text not null default '',
+  about text not null default '',
+  experience text not null default '',
+  education text not null default '',
+  skills text not null default '',
+  contacts text not null default '',
   slug text unique,
   is_published boolean not null default false,
   updated_at timestamptz not null default now()
 );
+
+-- allow re-running schema.sql later
+alter table public.resumes add column if not exists city text not null default '';
+alter table public.resumes add column if not exists age int;
+alter table public.resumes add column if not exists about text not null default '';
+alter table public.resumes add column if not exists experience text not null default '';
+alter table public.resumes add column if not exists education text not null default '';
+alter table public.resumes add column if not exists skills text not null default '';
+alter table public.resumes add column if not exists contacts text not null default '';
 
 create index if not exists resumes_slug_idx on public.resumes (slug);
 

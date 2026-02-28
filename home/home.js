@@ -71,7 +71,7 @@ async function loadResume() {
 
   const { data, error } = await sb
     .from("resumes")
-    .select("display_name,title,photo_url,markdown,updated_at,is_published,slug")
+    .select("*")
     .eq("slug", OWNER_SLUG)
     .eq("is_published", true)
     .maybeSingle();
@@ -93,6 +93,11 @@ async function loadResume() {
 
   currentResumeMarkdown = data.markdown || "";
   el("resumeContent").innerHTML = window.marked.parse(currentResumeMarkdown || "");
+
+  const meta = [];
+  if (data.city) meta.push(`Город: ${data.city}`);
+  if (data.age) meta.push(`Возраст: ${data.age}`);
+  setText("metaLine", meta.join(" • "));
 }
 
 function initAiMatch() {
