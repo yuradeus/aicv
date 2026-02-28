@@ -130,8 +130,17 @@ async function loadResume() {
     return;
   }
 
-  setText("candidateName", data.display_name || "Кандидат");
-  setText("candidateTitle", data.title || "Резюме");
+  const first = String(data.display_name || "").trim();
+  const last = String(data.last_name || "").trim();
+  let position = String(data.title || "").trim();
+  let effectiveLast = last;
+  if (!effectiveLast && position && /^[А-Яа-яЁё-]{2,}$/.test(position)) {
+    effectiveLast = position;
+    position = "";
+  }
+  const fullName = [first, effectiveLast].filter(Boolean).join(" ").trim() || "Кандидат";
+  setText("candidateName", fullName);
+  setText("candidateTitle", position || "Резюме");
   setAvatar(data.photo_url || "");
   setText("updatedAt", formatDate(data.updated_at));
   setText("subline", "");

@@ -113,8 +113,21 @@ async function loadResume() {
     return;
   }
 
-  setText("candidateName", data.display_name || "Кандидат");
-  setText("candidateTitle", data.title || "Резюме");
+  const first = String(data.display_name || "").trim();
+  const last = String(data.last_name || "").trim();
+  let position = String(data.title || "").trim();
+  let effectiveLast = last;
+
+  // Backward compatibility: if last_name is empty but title looks like a surname,
+  // show it as last name to keep "Имя Фамилия" bold.
+  if (!effectiveLast && position && /^[А-Яа-яЁё-]{2,}$/.test(position)) {
+    effectiveLast = position;
+    position = "";
+  }
+
+  const fullName = [first, effectiveLast].filter(Boolean).join(" ").trim() || "Кандидат";
+  setText("candidateName", fullName);
+  setText("candidateTitle", position || "Резюме");
   setText("updatedAt", formatDate(data.updated_at));
   setAvatar(data.photo_url || "");
 

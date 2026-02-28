@@ -6,6 +6,7 @@ create extension if not exists pgcrypto;
 create table if not exists public.resumes (
   user_id uuid primary key references auth.users (id) on delete cascade,
   display_name text not null default '',
+  last_name text not null default '',
   title text not null default '',
   city text not null default '',
   age int,
@@ -27,6 +28,7 @@ create table if not exists public.resumes (
 -- allow re-running schema.sql later
 alter table public.resumes add column if not exists city text not null default '';
 alter table public.resumes add column if not exists age int;
+alter table public.resumes add column if not exists last_name text not null default '';
 alter table public.resumes add column if not exists about text not null default '';
 alter table public.resumes add column if not exists experience text not null default '';
 alter table public.resumes add column if not exists education text not null default '';

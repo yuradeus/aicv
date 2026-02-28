@@ -50,6 +50,7 @@ async function ensureRow(userId) {
   const { error: insErr } = await sb.from("resumes").insert({
     user_id: userId,
     display_name: "",
+    last_name: "",
     title: "",
     city: "",
     age: null,
@@ -79,10 +80,12 @@ async function ensureRow(userId) {
 
 function fillForm(row) {
   el("displayName").value = row?.display_name || "";
+  el("lastName").value = row?.last_name || "";
   el("title").value = row?.title || "";
   el("city").value = row?.city || "";
   el("age").value = row?.age ?? "";
   el("photoUrl").value = row?.photo_url || "";
+  setPhotoPreview(row?.photo_url || "");
   el("about").value = row?.about || "";
   el("experience").value = row?.experience || "";
   el("education").value = row?.education || "";
@@ -92,6 +95,19 @@ function fillForm(row) {
   el("phone").value = row?.phone || "";
   el("contacts").value = row?.contacts || "";
   el("publicLink").textContent = new URL("/", window.location.origin).toString();
+}
+
+function setPhotoPreview(url) {
+  const img = el("photoPreview");
+  if (!img) return;
+  const u = String(url || "").trim();
+  if (!u) {
+    img.removeAttribute("src");
+    img.style.display = "none";
+    return;
+  }
+  img.src = u;
+  img.style.display = "block";
 }
 
 function normalizeAge(value) {
@@ -104,7 +120,8 @@ function normalizeAge(value) {
 
 function buildMarkdown(p) {
   const lines = [];
-  lines.push(`# ${p.display_name || "—"}`);
+  const fullName = [p.display_name, p.last_name].map((x) => String(x || "").trim()).filter(Boolean).join(" ");
+  lines.push(`# ${fullName || "—"}`);
   if (p.title) lines.push(`**Должность:** ${p.title}`);
 
   const meta = [];
@@ -194,6 +211,7 @@ async function saveAndPublish(userId) {
   const payload = {
     user_id: userId,
     display_name: (el("displayName").value || "").trim(),
+    last_name: (el("lastName").value || "").trim(),
     title: (el("title").value || "").trim(),
     city: (el("city").value || "").trim(),
     age,
@@ -215,8 +233,12 @@ async function saveAndPublish(userId) {
     setStatus("saveStatus", "Введите имя.");
     return;
   }
+  if (!payload.last_name) {
+    setStatus("saveStatus", "Введите фамилию.");
+    return;
+  }
   if (!payload.title) {
-    setStatus("saveStatus", "Введите заголовок (например, должность).");
+    setStatus("saveStatus", "Введите должность.");
     return;
   }
 
@@ -267,6 +289,7 @@ async function main() {
   const row = await ensureRow(session.user.id);
   fillForm(row);
   el("saveBtn").addEventListener("click", () => saveAndPublish(session.user.id));
+  el("photoUrl").addEventListener("input", () => setPhotoPreview(el("photoUrl").value));
 }
 
 main();

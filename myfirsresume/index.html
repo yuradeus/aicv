@@ -43,11 +43,19 @@
             <div class="cardSub">Нажмите “Сохранить” — и оно сразу станет доступно на корне домена.</div>
           </div>
           <div class="cardBody">
-            <label class="fieldLabel" for="displayName">Имя</label>
-            <input id="displayName" type="text" placeholder="Ваше Имя" />
+            <div class="grid" style="grid-template-columns: 1fr 1fr; margin-top: 0;">
+              <div>
+                <label class="fieldLabel" for="displayName">Имя</label>
+                <input id="displayName" type="text" placeholder="Юрий" />
+              </div>
+              <div>
+                <label class="fieldLabel" for="lastName">Фамилия</label>
+                <input id="lastName" type="text" placeholder="Охакин" />
+              </div>
+            </div>
 
-            <label class="fieldLabel" for="title">Заголовок</label>
-            <input id="title" type="text" placeholder="Должность • Город • Формат" />
+            <label class="fieldLabel" for="title">Должность</label>
+            <input id="title" type="text" placeholder="Frontend Developer" />
 
             <div class="grid" style="grid-template-columns: 1fr 1fr; margin-top: 0;">
               <div>
@@ -62,6 +70,10 @@
 
             <label class="fieldLabel" for="photoUrl">Фото (URL)</label>
             <input id="photoUrl" type="url" placeholder="https://..." />
+            <div class="hint">Превью:</div>
+            <div class="avatar" style="width:64px;height:64px;border-radius:14px;">
+              <img id="photoPreview" alt="" style="display:none;" />
+            </div>
 
             <label class="fieldLabel" for="about">О себе</label>
             <textarea id="about" placeholder="2–6 предложений о себе"></textarea>
